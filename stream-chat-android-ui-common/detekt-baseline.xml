@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongParameterList:Linkify.kt$Linkify$( links: MutableList&lt;LinkSpec>, s: Spannable, pattern: Pattern, schemes: Array&lt;String>, matchFilter: Linkify.MatchFilter?, transformFilter: Linkify.TransformFilter?, )</ID>
+    <ID>NestedBlockDepth:Linkify.kt$Linkify$private fun pruneOverlaps(links: MutableList&lt;LinkSpec>, text: Spannable)</ID>
+  </CurrentIssues>
+</SmellBaseline>
