@@ -10,10 +10,10 @@
 
     <ImageView
         android:id="@+id/streamLogoImageView"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginTop="32dp"
-        android:src="@drawable/ic_stream_logo"
+        android:src="@drawable/img"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
