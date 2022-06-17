@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/stream_color_primary</item>
+        <item name="colorPrimaryDark">@color/stream_color_primary_dark</item>
+        <item name="streamUiTheme">@style/StreamTheme</item>
+    </style>
+
+    <style name="StreamTheme" parent="@style/StreamUiTheme">
+        <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
+    </style>
+
+    <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog">
+        <item name="streamUiChannelActionsViewInfoEnabled">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="ThemeOverlay.Letter.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
+        <item name="fullscreenTextColor">@color/light_blue_A200</item>
+    </style>
+</resources>

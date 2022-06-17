@@ -51,6 +51,7 @@ buildscript {
         classpath Dependencies.spotlessGradlePlugin
         classpath Dependencies.ksp
         classpath Dependencies.detektPlugin
+        classpath 'com.google.gms:google-services:4.3.10'
     }
 }
 
@@ -116,7 +117,7 @@ apiValidation {
 
     ignoredProjects += [
             'stream-chat-android-docs',
-            'stream-chat-android-ui-components-sample',
+            'ChatApp',
     ]
 
     nonPublicMarkers += [

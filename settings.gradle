@@ -5,7 +5,7 @@ plugins {
 include (
 		':stream-chat-android-ui-common',
 		':stream-chat-android-ui-components',
-		':stream-chat-android-ui-components-sample',
+        ':ChatApp',
 		':stream-chat-android-offline',
 		':stream-chat-android-client',
 		':stream-chat-android-core'
