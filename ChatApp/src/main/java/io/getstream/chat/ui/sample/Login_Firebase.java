@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,33 +112,32 @@ public class Login_Firebase extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         btnLogin.setOnClickListener(view -> {
             loginUser();  //log in with firebase
-            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (firebaseUser != null) {
-                StreamOfflinePluginFactory streamOfflinePluginFactory = new StreamOfflinePluginFactory(
-                        new Config(
-                                true,
-                                true,
-                                true,
-                                UploadAttachmentsNetworkType.NOT_ROAMING
-                        ),
-                        getActivity().getApplicationContext()
-                );
-                ChatClient client = new ChatClient.Builder(AppConfig.apiKey, getActivity().getApplicationContext())
-                        .withPlugin(streamOfflinePluginFactory)
-                        .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
-                        .build();
-
-
-                User user = new User();
-                user.setId(firebaseUser.getUid());
-                String userEmail = firebaseUser.getEmail();
-                String username = userEmail.substring(0, userEmail.indexOf("@"));
-                user.setName(username);
-                String token = client.devToken(user.getId());
-                LoginCredentials2 loginCredentials = new LoginCredentials2(AppConfig.apiKey, user.getId(), token, user.getName());
-                firebaseLoginViewModel.loginButtonClicked(loginCredentials);
-                Navigation.findNavController(loginView).navigate(R.id.action_login_Firebase_to_homeFragment);
-            }
+//            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+//            if (firebaseUser != null) {
+//                StreamOfflinePluginFactory streamOfflinePluginFactory = new StreamOfflinePluginFactory(
+//                        new Config(
+//                                true,
+//                                true,
+//                                true,
+//                                UploadAttachmentsNetworkType.NOT_ROAMING
+//                        ),
+//                        getActivity().getApplicationContext()
+//                );
+//                ChatClient client = ChatClient.instance();
+//
+//                User user = new User();
+//                user.setId(firebaseUser.getUid());
+//                String userEmail = firebaseUser.getEmail();
+//                String username = userEmail.substring(0, userEmail.indexOf("@"));
+//                user.setName(username);
+//                String token = client.devToken(user.getId());
+//                LoginCredentials2 loginCredentials = new LoginCredentials2(AppConfig.apiKey, user.getId(), token, user.getName());
+//                firebaseLoginViewModel.loginButtonClicked(loginCredentials);
+//                Navigation.findNavController(loginView).navigate(R.id.action_login_Firebase_to_homeFragment);
+//            }
+//            else {
+//                Log.v("login","null here");
+//            }
         });
 
 
@@ -165,6 +165,32 @@ public class Login_Firebase extends Fragment {
                         //Toast.makeText(LoginActivity.this, "User logged in successfully", Toast.LENGTH_SHORT).show();
                         Toast.makeText(getActivity(), "User logged in successfully", Toast.LENGTH_SHORT).show();
                         //Navigation.findNavController(getView()).navigate(R.id.action_login_Firebase_to_homeFragment);
+                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (firebaseUser != null) {
+                            StreamOfflinePluginFactory streamOfflinePluginFactory = new StreamOfflinePluginFactory(
+                                    new Config(
+                                            true,
+                                            true,
+                                            true,
+                                            UploadAttachmentsNetworkType.NOT_ROAMING
+                                    ),
+                                    getActivity().getApplicationContext()
+                            );
+                            ChatClient client = ChatClient.instance();
+
+                            User user = new User();
+                            user.setId(firebaseUser.getUid());
+                            String userEmail = firebaseUser.getEmail();
+                            String username = userEmail.substring(0, userEmail.indexOf("@"));
+                            user.setName(username);
+                            String token = client.devToken(user.getId());
+                            LoginCredentials2 loginCredentials = new LoginCredentials2(AppConfig.apiKey, user.getId(), token, user.getName());
+                            firebaseLoginViewModel.loginButtonClicked(loginCredentials);
+                            Navigation.findNavController(getView()).navigate(R.id.action_login_Firebase_to_homeFragment);
+                        }
+                        else {
+                            Log.v("login","null here");
+                        }
                     } else {
                         //Toast.makeText(LoginActivity.this, "Log in Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         Toast.makeText(getActivity(), "Log in Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();

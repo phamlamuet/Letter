@@ -16,7 +16,7 @@ import io.getstream.chat.ui.sample.feature.custom_login.LoginCredentials
 class FirebaseLoginViewModel : ViewModel() {
 
     fun loginButtonClicked(credentials: LoginCredentials2) {
-            initChatSdk(credentials)
+         //   initChatSdk(credentials)
             initChatUser(credentials)
     }
 
