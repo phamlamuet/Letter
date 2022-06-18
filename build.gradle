@@ -115,11 +115,6 @@ apiValidation {
             'io/getstream/chat/android/ui/databinding',
     ]
 
-    ignoredProjects += [
-            'stream-chat-android-docs',
-            'ChatApp',
-    ]
-
     nonPublicMarkers += [
             'io.getstream.chat.android.core.internal.InternalStreamChatApi',
     ]
