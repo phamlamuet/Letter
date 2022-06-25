@@ -83,7 +83,7 @@ internal class ChatNotificationsImpl constructor(
         if (newMessageEvent.message.user.id == currentUserId) return
 
         logger.logD("Handling $newMessageEvent")
-        if (!handler.onChatEvent(newMessageEvent)) {
+        if (handler.onChatEvent(newMessageEvent)) {
             logger.logI("Handling $newMessageEvent internally")
             handleEvent(newMessageEvent)
         }
