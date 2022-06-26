@@ -13,9 +13,8 @@ include (
 		':stream-chat-android-docs'
         ,
 		':stream-chat-android-markdown-transformer',
-		':stream-chat-android-pushprovider-firebase',
-		':stream-chat-android-pushprovider-huawei',
-		':stream-chat-android-pushprovider-xiaomi'
+		':stream-chat-android-pushprovider-firebase'
+
 
 )
 

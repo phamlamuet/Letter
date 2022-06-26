@@ -27,11 +27,6 @@ import io.getstream.chat.android.client.di.networkFlipper
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 object ApplicationConfigurator {
-
-    const val HUAWEI_APP_ID = "104598359"
-    const val XIAOMI_APP_ID = "2882303761520059340"
-    const val XIAOMI_APP_KEY = "5792005994340"
-
     @OptIn(InternalStreamChatApi::class)
     fun configureApp(application: Application) {
         SoLoader.init(application, false)
