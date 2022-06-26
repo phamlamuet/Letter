@@ -69,7 +69,7 @@ class HomeFragment : Fragment() {
     @OptIn(InternalStreamChatApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance()
         parseNotificationData()
         setupBottomNavigation()
         setupNavigationDrawer()
@@ -175,9 +175,9 @@ class HomeFragment : Fragment() {
 
         binding.signOutTextView.setOnClickListener {
             homeViewModel.onUiAction(HomeFragmentViewModel.UiAction.LogoutClicked)
-            val currentUser = mAuth?.currentUser;
+            val currentUser = mAuth?.currentUser
             if(currentUser!=null){
-            mAuth?.signOut();
+            mAuth?.signOut()
             }
         }
         binding.versionName.text = BuildConfig.VERSION_NAME

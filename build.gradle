@@ -26,6 +26,7 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
         google()
         mavenCentral()
+        jcenter()
         maven {
             url 'https://developer.huawei.com/repo/'
             content {
@@ -66,6 +67,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        jcenter()
         maven {
             url "https://jitpack.io"
             content {
@@ -75,6 +77,7 @@ allprojects {
                 includeModule("com.github.stfalcon-studio", "StfalconImageViewer")
             }
         }
+        maven { url 'https://jitpack.io' }
     }
 }
 

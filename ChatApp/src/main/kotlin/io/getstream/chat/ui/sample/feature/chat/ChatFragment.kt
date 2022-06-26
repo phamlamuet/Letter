@@ -16,18 +16,24 @@
 
 package io.getstream.chat.ui.sample.feature.chat
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.androidnetworking.AndroidNetworking
+import com.androidnetworking.error.ANError
+import com.androidnetworking.interfaces.JSONObjectRequestListener
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
+import com.google.firebase.auth.FirebaseAuth
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
@@ -39,10 +45,13 @@ import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHea
 import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.bindView
 import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.ui.sample.call.JoinActivity
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.Calendar
 
 class ChatFragment : Fragment() {
@@ -58,6 +67,11 @@ class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
+
+    private val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    private val token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI4N2RmYzFmOS01NmE0LTQ5MWYtOWU0Yi1iMDg0NjUzMjkwNmUiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTY1NjA3Nzk1NCwiZXhwIjoxNjU2NjgyNzU0fQ.OPeBbK8jaDtLmay96-KwEIruDtW-pDSo0sYM3jG_fL0"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,11 +94,46 @@ class ChatFragment : Fragment() {
         initMessagesViewModel()
         initMessageInputViewModel()
         configureBackButtonHandling()
+        initCallActivity()
     }
 
     override fun onResume() {
         super.onResume()
         useAdjustResize()
+    }
+
+    private fun initCallActivity() {
+        binding.callButton.setOnClickListener { view ->
+            run {
+                AndroidNetworking.post("https://api.videosdk.live/v1/meetings")
+                    .addHeaders("Authorization", token)
+                    .build()
+                    .getAsJSONObject(object : JSONObjectRequestListener {
+                        override fun onResponse(response: JSONObject?) {
+                            try {
+                                val meetingId = response?.getString("meetingId")
+
+                                val email = mAuth.currentUser?.email
+                                val intent = Intent(activity, JoinActivity::class.java).apply {
+                                    putExtra("token", token)
+                                    putExtra("meetingId", meetingId)
+                                    // putExtra("paticipantName", email?.substring(0, email.indexOf("@")))
+                                }
+                                startActivity(intent)
+                            } catch (e: JSONException) {
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onError(anError: ANError?) {
+                            anError?.printStackTrace()
+                            Toast.makeText(activity,
+                                anError?.errorDetail, Toast.LENGTH_SHORT).show()
+                        }
+                    })
+
+            }
+        }
     }
 
     private fun configureBackButtonHandling() {

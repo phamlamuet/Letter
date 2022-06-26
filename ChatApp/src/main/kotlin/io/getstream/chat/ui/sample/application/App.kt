@@ -22,20 +22,27 @@ import coil.Coil
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.androidnetworking.AndroidNetworking
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.data.user.UserRepository
+import live.videosdk.rtc.android.Meeting
+import live.videosdk.rtc.android.VideoSDK
 
 class App : Application() {
+
+    // feature/call
+    lateinit var meeting: Meeting
 
     // done for simplicity, a DI framework should be used in the real app
     val chatInitializer = ChatInitializer(this)
     val userRepository = UserRepository(this)
 
    // var mAuth = FirebaseAuth.getInstance()
+
 
     override fun onCreate() {
         super.onCreate()
@@ -54,6 +61,10 @@ class App : Application() {
         )
         ApplicationConfigurator.configureApp(this)
         initializeToggleService()
+
+        // feature/call
+        VideoSDK.initialize(applicationContext)
+        AndroidNetworking.initialize(applicationContext)
     }
 
     private fun getApiKey(): String {
