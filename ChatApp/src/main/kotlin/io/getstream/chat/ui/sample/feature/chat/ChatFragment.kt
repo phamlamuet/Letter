@@ -18,18 +18,15 @@ package io.getstream.chat.ui.sample.feature.chat
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.androidnetworking.AndroidNetworking
-import com.androidnetworking.error.ANError
-import com.androidnetworking.interfaces.JSONObjectRequestListener
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.getCreatedAtOrThrow
@@ -50,8 +47,6 @@ import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
-import org.json.JSONException
-import org.json.JSONObject
 import java.util.Calendar
 
 class ChatFragment : Fragment() {
@@ -103,35 +98,15 @@ class ChatFragment : Fragment() {
     }
 
     private fun initCallActivity() {
-        binding.callButton.setOnClickListener { view ->
+        binding.callButton.setOnClickListener {
             run {
-                AndroidNetworking.post("https://api.videosdk.live/v1/meetings")
-                    .addHeaders("Authorization", token)
-                    .build()
-                    .getAsJSONObject(object : JSONObjectRequestListener {
-                        override fun onResponse(response: JSONObject?) {
-                            try {
-                                val meetingId = response?.getString("meetingId")
-
-                                val email = mAuth.currentUser?.email
-                                val intent = Intent(activity, JoinActivity::class.java).apply {
-                                    putExtra("token", token)
-                                    putExtra("meetingId", meetingId)
-                                    // putExtra("paticipantName", email?.substring(0, email.indexOf("@")))
-                                }
-                                startActivity(intent)
-                            } catch (e: JSONException) {
-                                e.printStackTrace()
-                            }
-                        }
-
-                        override fun onError(anError: ANError?) {
-                            anError?.printStackTrace()
-                            Toast.makeText(activity,
-                                anError?.errorDetail, Toast.LENGTH_SHORT).show()
-                        }
-                    })
-
+                val email = mAuth.currentUser?.email
+                val intent = Intent(activity, JoinActivity::class.java).apply {
+                    putExtra("token", token)
+                    putExtra("cid", args.cid)
+                    putExtra("participantName", email?.substring(0, email.indexOf("@")))
+                }
+                startActivity(intent)
             }
         }
     }
@@ -237,14 +212,16 @@ class ChatFragment : Fragment() {
             setConfirmDeleteMessageHandler { _, confirmCallback: () -> Unit ->
                 ConfirmationDialogFragment.newDeleteMessageInstance(requireContext())
                     .apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
+                        confirmClickListener =
+                            ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
                     }.show(parentFragmentManager, null)
             }
 
             setConfirmFlagMessageHandler { _, confirmCallback: () -> Unit ->
                 ConfirmationDialogFragment.newFlagMessageInstance(requireContext())
                     .apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
+                        confirmClickListener =
+                            ConfirmationDialogFragment.ConfirmClickListener(confirmCallback::invoke)
                     }.show(parentFragmentManager, null)
             }
 

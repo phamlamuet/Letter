@@ -15,10 +15,15 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.webrtc.Camera1Enumerator;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SurfaceTextureHelper;
@@ -29,6 +34,8 @@ import org.webrtc.VideoTrack;
 
 import java.util.ArrayList;
 
+import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.ui.sample.R;
 import live.videosdk.rtc.android.lib.PeerConnectionUtils;
 
@@ -39,7 +46,7 @@ public class JoinActivity extends AppCompatActivity {
 
     private FloatingActionButton btnMic, btnWebcam;
     private SurfaceViewRenderer svrJoin;
-    private EditText etName;
+    private EditText etMeetingId;
 
     VideoTrack videoTrack;
     VideoCapturer videoCapturer;
@@ -90,7 +97,7 @@ public class JoinActivity extends AppCompatActivity {
         btnMic = findViewById(R.id.btnMic);
         btnWebcam = findViewById(R.id.btnWebcam);
         svrJoin = findViewById(R.id.svrJoiningView);
-        etName = findViewById(R.id.etName);
+        etMeetingId = findViewById(R.id.etName);
 
         checkPermissions();
 
@@ -115,20 +122,72 @@ public class JoinActivity extends AppCompatActivity {
         });
 
         final String token = getIntent().getStringExtra("token");
-        final String meetingId = getIntent().getStringExtra("meetingId");
 
         btnJoin.setOnClickListener(v -> {
-            if ("".equals(etName.getText().toString())) {
-                Toast.makeText(JoinActivity.this, "Please Enter Name", Toast.LENGTH_SHORT).show();
+            if ("".equals(etMeetingId.getText().toString())) {
+                AndroidNetworking.post("https://api.videosdk.live/v1/meetings")
+                        .addHeaders("Authorization", token)
+                        .build()
+                        .getAsJSONObject(new JSONObjectRequestListener() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    final String meetingId = response.getString("meetingId");
+
+                                    String cid = getIntent().getStringExtra("cid");
+
+                                    Message message = new Message();
+                                    message.setText(meetingId);
+                                    message.setCid(cid);
+
+                                    ChatClient.instance().channel(cid)
+                                            .sendMessage(message)
+                                            .enqueue();
+                                    Intent intent = new Intent(JoinActivity.this, CallActivity.class);
+                                    intent.putExtra("token", token);
+                                    intent.putExtra("meetingId", meetingId);
+                                    intent.putExtra("micEnabled", micEnabled);
+                                    intent.putExtra("webcamEnabled", webcamEnabled);
+                                    intent.putExtra("participantName", getIntent().getStringExtra("participantName"));
+                                    startActivity(intent);
+                                    finish();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onError(ANError anError) {
+                                anError.printStackTrace();
+                                Toast.makeText(JoinActivity.this, anError.getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
             } else {
-                Intent intent = new Intent(JoinActivity.this, CallActivity.class);
-                intent.putExtra("token", token);
-                intent.putExtra("meetingId", meetingId);
-                intent.putExtra("micEnabled", micEnabled);
-                intent.putExtra("webcamEnabled", webcamEnabled);
-                intent.putExtra("paticipantName", etName.getText().toString().trim());
-                startActivity(intent);
-                finish();
+                String sMeetingId = etMeetingId.getText().toString();
+                AndroidNetworking.post("https://api.videosdk.live/v1/meetings/" + sMeetingId)
+                        .addHeaders("Authorization", token)
+                        .build()
+                        .getAsJSONObject(new JSONObjectRequestListener() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Intent intent = new Intent(JoinActivity.this, CallActivity.class);
+                                intent.putExtra("token", token);
+                                intent.putExtra("meetingId", sMeetingId);
+                                intent.putExtra("micEnabled", micEnabled);
+                                intent.putExtra("webcamEnabled", webcamEnabled);
+                                intent.putExtra("paticipantName", getIntent().getStringExtra("paticipantName"));
+                                startActivity(intent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onError(ANError anError) {
+                                anError.printStackTrace();
+                                Toast.makeText(JoinActivity.this, anError.getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
         });
 

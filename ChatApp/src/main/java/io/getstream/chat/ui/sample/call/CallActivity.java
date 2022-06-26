@@ -108,7 +108,7 @@ public class CallActivity extends AppCompatActivity {
         final String meetingId = getIntent().getStringExtra("meetingId");
         micEnabled = getIntent().getBooleanExtra("micEnabled", true);
         webcamEnabled = getIntent().getBooleanExtra("webcamEnabled", true);
-        String participantName = getIntent().getStringExtra("paticipantName");
+        String participantName = getIntent().getStringExtra("participantName");
         if (participantName == null) {
             participantName = "John Doe";
         }
